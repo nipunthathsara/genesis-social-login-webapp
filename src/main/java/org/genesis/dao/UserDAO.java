@@ -24,6 +24,9 @@ import org.genesis.dto.UserDTO;
 
 import java.sql.*;
 
+import static org.genesis.Constants.AUTHENTICATE_SQL;
+import static org.genesis.Constants.CREATE_USER_SQL;
+
 public class UserDAO {
 
     private final static Logger log = Logger.getLogger(UserDAO.class);
@@ -31,36 +34,40 @@ public class UserDAO {
     public void createUser(UserDTO userDTO) throws SQLException {
 
         Connection connection = null;
-        String query = "";
         try {
             connection = Utils.getConnection();
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(query);
+            PreparedStatement prepStatement = connection.prepareStatement(CREATE_USER_SQL);
+            prepStatement.setString(1, userDTO.getUsername());
+            prepStatement.setString(2, userDTO.getPassword());
+            prepStatement.setString(3, userDTO.getGender());
+            prepStatement.setString(4, userDTO.getEmail());
+            prepStatement.executeUpdate();
             log.info("User created successfully.");
-        } catch (SQLException e) {
-            log.error("Error while creating the user.", e);
-            throw e;
         } finally {
-            connection.close();
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 
     public boolean authenticateUser(String username, String password) throws SQLException {
         Connection connection = null;
-        String query = "";
+        boolean isAuthenticated = false;
         try {
             connection = Utils.getConnection();
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(query);
-            while(rs.next()) {
-
+            PreparedStatement prepStatement = connection.prepareStatement(AUTHENTICATE_SQL);
+            prepStatement.setString(1, username);
+            prepStatement.setString(2, password);
+            ResultSet rs = prepStatement.executeQuery();
+            while (rs.next()) {
+                isAuthenticated = true;
             }
-            log.info("User created successfully.");
-        } catch (SQLException e) {
-            log.error("Error while creating the user.", e);
-            throw e;
+            log.info("User authenticated successfully.");
         } finally {
-            connection.close();
+            if (connection != null) {
+                connection.close();
+            }
         }
+        return isAuthenticated;
     }
 }

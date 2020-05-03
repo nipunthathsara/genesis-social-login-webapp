@@ -16,16 +16,22 @@
  * under the License.
  */
 
-package org.genesis;
+package org.genesis.service;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import org.apache.log4j.Logger;
+import org.genesis.dao.UserDAO;
 
-public class Utils {
+public class AuthenticationService {
 
-    public static Connection getConnection() throws SQLException {
+    private final static Logger log = Logger.getLogger(AuthenticationService.class);
 
-        return DriverManager.getConnection(Constants.DB_CONNECTION_URL, Constants.DB_USERNAME, Constants.DB_PASSWORD);
+    public boolean authenticate (String username, String password) {
+        UserDAO userDAO = new UserDAO();
+        try {
+            return userDAO.authenticateUser(username, password);
+        } catch (Exception e) {
+            log.error("Error while authenticating the user.", e);
+            return false;
+        }
     }
 }

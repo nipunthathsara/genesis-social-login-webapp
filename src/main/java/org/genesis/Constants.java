@@ -19,4 +19,14 @@
 package org.genesis;
 
 public class Constants {
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
+    public static final String EMAIL = "email";
+    public static final String GENDER = "gender";
+
+    public static final String DB_CONNECTION_URL = "jdbc:mysql://localhost:3306/test";
+    public static final String DB_USERNAME = "root";
+    public static final String DB_PASSWORD = "root";
+    public static final String CREATE_USER_SQL = "INSERT INTO user (USERNAME, PASSWORD, GENDER, EMAIL) VALUES (?, ?, ?, ?)";
+    public static final String AUTHENTICATE_SQL = "SELECT * FROM user WHERE USERNAME = ? AND PASSWORD = ?";
 }

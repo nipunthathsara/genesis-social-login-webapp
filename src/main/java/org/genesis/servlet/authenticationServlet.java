@@ -16,25 +16,31 @@
  * under the License.
  */
 
-package org.genesis.login;
+package org.genesis.servlet;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
+import org.genesis.Constants;
+import org.genesis.service.AuthenticationService;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @WebServlet(
-        name = "loginServlet",
-        urlPatterns = "/login"
+        name = "authenticationServlet",
+        urlPatterns = "/authenticate"
 )
-public class LoginServlet extends HttpServlet {
+public class authenticationServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        RequestDispatcher requestDispatcher = req.getRequestDispatcher("login.jsp");
-//        requestDispatcher.forward(req, resp);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        AuthenticationService authenticationService = new AuthenticationService();
+        String username = req.getParameter(Constants.USERNAME);
+        String password = req.getParameter(Constants.PASSWORD);
+        boolean isAuthenticated = authenticationService.authenticate(username, password);
+        if (isAuthenticated) {
+            resp.setStatus(200);
+        }
+        resp.setStatus(401);
     }
 }

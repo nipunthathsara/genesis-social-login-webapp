@@ -16,9 +16,12 @@
  * under the License.
  */
 
-package org.genesis.login.registration;
+package org.genesis.servlet;
 
-import javax.servlet.ServletException;
+import org.genesis.Constants;
+import org.genesis.dto.UserDTO;
+import org.genesis.service.RegistrationService;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +35,20 @@ import java.io.IOException;
 public class RegistrationServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(req.getParameter(Constants.USERNAME));
+        userDTO.setPassword(req.getParameter(Constants.PASSWORD));
+        userDTO.setEmail(req.getParameter(Constants.EMAIL));
+        userDTO.setGender(req.getParameter(Constants.GENDER));
+        RegistrationService regService = new RegistrationService();
+        boolean error = regService.registerUser(userDTO);
+        if (error) {
+            resp.setStatus(500);
+            resp.sendError(1000, "Error occurred while creating the user");
+        } else {
+            resp.setStatus(202);
+        }
     }
 }

@@ -18,11 +18,23 @@
 
 package org.genesis.service;
 
+import org.apache.log4j.Logger;
+import org.genesis.dao.UserDAO;
 import org.genesis.dto.UserDTO;
 
 public class RegistrationService {
 
-    public void registerUser(UserDTO user) {
+    private static final Logger log = Logger.getLogger(RegistrationService.class);
 
+    public boolean registerUser(UserDTO user) {
+        boolean error = false;
+        UserDAO userDAO = new UserDAO();
+        try {
+            userDAO.createUser(user);
+        } catch (Exception e) {
+            log.error("Error while creating the user.", e);
+            error = true;
+        }
+        return error;
     }
 }
