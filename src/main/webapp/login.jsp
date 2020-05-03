@@ -9,7 +9,7 @@
     <h1>
         Login
     </h1>
-    <form action="/authenticate" method="post">
+    <form action="http://localhost:8080/org.genesis.login/authenticate" method="post">
       <div class="container">
         <label><b>Username</b></label>
         <input type="text" placeholder="Enter Username" name="username" required>

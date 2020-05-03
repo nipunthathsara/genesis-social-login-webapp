@@ -25,6 +25,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @WebServlet(
         name = "authenticationServlet",
@@ -33,13 +34,14 @@ import javax.servlet.http.HttpServletResponse;
 public class authenticationServlet extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         AuthenticationService authenticationService = new AuthenticationService();
         String username = req.getParameter(Constants.USERNAME);
         String password = req.getParameter(Constants.PASSWORD);
         boolean isAuthenticated = authenticationService.authenticate(username, password);
         if (isAuthenticated) {
-            resp.setStatus(200);
+            resp.setStatus(302);
+            resp.sendRedirect("index.jsp");
         }
         resp.setStatus(401);
     }
