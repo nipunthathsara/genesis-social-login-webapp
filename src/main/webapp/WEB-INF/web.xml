@@ -23,4 +23,9 @@
     <jsp-file>/register.jsp</jsp-file>
   </servlet>
 
+  <listener>
+    <listener-class>
+      org.genesis.InitializationListener
+    </listener-class>
+  </listener>
 </web-app>

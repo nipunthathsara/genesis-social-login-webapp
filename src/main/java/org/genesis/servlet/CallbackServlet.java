@@ -19,9 +19,9 @@
 package org.genesis.servlet;
 
 import org.genesis.Constants;
-import org.genesis.dto.UserDTO;
-import org.genesis.service.RegistrationService;
+import org.genesis.service.TokenService;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,27 +29,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(
-        name = "registrationServlet",
-        urlPatterns = "/register"
+        name = "callbackServlet",
+        urlPatterns = "/callback"
 )
-public class RegistrationServlet extends HttpServlet {
-
+public class CallbackServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername(req.getParameter(Constants.USERNAME));
-        userDTO.setPassword(req.getParameter(Constants.PASSWORD));
-        userDTO.setEmail(req.getParameter(Constants.EMAIL));
-        userDTO.setGender(req.getParameter(Constants.GENDER));
-        RegistrationService regService = new RegistrationService();
-        boolean error = regService.registerUser(userDTO);
-        if (error) {
-            resp.setStatus(500);
-            resp.sendError(1000, "Error occurred while creating the user");
-        } else {
-            resp.setStatus(302);
-            resp.sendRedirect("login.jsp");
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String code = req.getParameter(Constants.AUTHORIZATION_CODE_PARAMETER);
+        if (code != null && !code.trim().isEmpty()) {
+            TokenService tokenService = new TokenService();
+            tokenService.getIdToken(code.trim());
         }
+        super.doGet(req, resp);
     }
 }

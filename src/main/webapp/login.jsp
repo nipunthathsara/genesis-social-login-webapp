@@ -31,5 +31,17 @@
         <span>Forgot <a href="#">password?</a></span>
       </div>
     </form>
+         <div class="container">
+            <button type="button" onclick="doOpenId()">WSO2 OpenId Login</button>
+            <span>Forgot <a href="#">password?</a></span>
+          </div>
+
+
+     <script>
+     function doOpenId(){
+     var authorizeURL ="https://localhost:9443/oauth2/authorize?response_type=code&scope=openid&client_id=j5eXqvEaZcpCO23fhsWtMDmzta4a&redirect_uri=http://localhost:8080/org.genesis.login/callback";
+     window.location = authorizeURL;
+     }
+     </script>
 </body>
 </html>

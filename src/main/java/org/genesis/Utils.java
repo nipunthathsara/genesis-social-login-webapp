@@ -21,11 +21,16 @@ package org.genesis;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Base64;
 
 public class Utils {
 
     public static Connection getConnection() throws SQLException {
 
         return DriverManager.getConnection(Constants.DB_CONNECTION_URL, Constants.DB_USERNAME, Constants.DB_PASSWORD);
+    }
+
+    public static String base64Encode(String inputString) {
+        return Base64.getEncoder().encode(inputString.getBytes()).toString();
     }
 }
