@@ -20,14 +20,11 @@ package org.genesis.servlet;
 
 import org.genesis.Constants;
 import org.genesis.service.AuthenticationService;
-import org.genesis.service.TokenService;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @WebServlet(
         name = "callbackServlet",
@@ -35,14 +32,11 @@ import java.io.IOException;
 )
 public class CallbackServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         String code = req.getParameter(Constants.AUTHORIZATION_CODE_PARAMETER);
         if (code != null && !code.trim().isEmpty()) {
-            TokenService tokenService = new TokenService();
             AuthenticationService authenticationService = new AuthenticationService();
-            String idToken = tokenService.getIdToken(code.trim());
-            authenticationService.authenticate(idToken);
+            authenticationService.authenticateWithOpenid(code);
         }
-        super.doGet(req, resp);
     }
 }

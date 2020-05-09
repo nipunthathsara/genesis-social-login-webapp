@@ -23,7 +23,6 @@ import org.apache.log4j.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.net.URL;
-import java.net.URLClassLoader;
 
 public class InitializationListener implements ServletContextListener {
 
@@ -32,11 +31,9 @@ public class InitializationListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         final URL resource = this.getClass().getClassLoader().getResource("client-truststore.jks");
-        log.info("****" + resource.getPath());
         System.setProperty("javax.net.ssl.trustStore", resource.getPath());
         System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
         System.setProperty("javax.net.ssl.trustStoreType", "JKS");
-
         log.info("Webapp started.");
     }
 

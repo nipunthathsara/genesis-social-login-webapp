@@ -20,6 +20,8 @@ package org.genesis.service;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -36,6 +38,7 @@ import org.genesis.Utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +49,7 @@ public class TokenService {
     CloseableHttpClient httpClient = HttpClients.createDefault();
     CloseableHttpResponse httpResponse;
 
-    public String getIdToken(String code) {
+    private String exchangeCodeForToken(String code) {
         String idToken = null;
         try {
             HttpPost request = new HttpPost(Constants.TOKEN_ENDPOINT_URL);
@@ -60,6 +63,7 @@ public class TokenService {
             parameters.add(new BasicNameValuePair(Constants.AUTHORIZATION_CODE_PARAMETER, code));
             request.setEntity(new UrlEncodedFormEntity(parameters));
             httpResponse = httpClient.execute(request);
+
             String response = EntityUtils.toString(httpResponse.getEntity());
             log.info("Token call response : " + response);
             JsonObject jsonObject = (new JsonParser()).parse(response).getAsJsonObject();
@@ -73,5 +77,13 @@ public class TokenService {
             log.error("Error while sending the token request.", e);
         }
         return idToken;
+    }
+
+    public String getSubject(String code) throws ParseException {
+        String idToken = exchangeCodeForToken(code);
+        SignedJWT signedJWT = SignedJWT.parse(idToken);
+        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+        log.info("Username : "  + claimsSet.getSubject());
+        return claimsSet.getSubject();
     }
 }

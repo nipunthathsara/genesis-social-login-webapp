@@ -18,8 +18,6 @@
 
 package org.genesis.service;
 
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
 import org.apache.log4j.Logger;
 import org.genesis.dao.UserDAO;
 
@@ -40,21 +38,17 @@ public class AuthenticationService {
         }
     }
 
-    public boolean authenticate(String idToken) {
+    public boolean authenticateWithOpenid(String code) {
         UserDAO userDAO = new UserDAO();
+        TokenService tokenService = new TokenService();
         try {
-            return userDAO.userExist(getSubject(idToken));
+            String username = tokenService.getSubject(code);
+            return userDAO.userExist(username);
         } catch (SQLException e) {
             log.error("Error while authenticating the user from ID token.", e);
         } catch (ParseException e) {
             log.error("Error while authenticating the user from ID token.", e);
         }
         return false;
-    }
-
-    private String getSubject(String idToken) throws ParseException {
-        SignedJWT signedJWT = SignedJWT.parse(idToken);
-        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
-        return claimsSet.getSubject();
     }
 }

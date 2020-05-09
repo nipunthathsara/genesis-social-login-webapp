@@ -32,6 +32,7 @@ public class Utils {
     }
 
     public static String base64Encode(String inputString) throws UnsupportedEncodingException {
+
         return Base64.getEncoder().encodeToString(inputString.getBytes("UTF-8"));
     }
 }
