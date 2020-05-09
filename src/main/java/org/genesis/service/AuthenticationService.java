@@ -18,14 +18,19 @@
 
 package org.genesis.service;
 
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import org.apache.log4j.Logger;
 import org.genesis.dao.UserDAO;
+
+import java.sql.SQLException;
+import java.text.ParseException;
 
 public class AuthenticationService {
 
     private final static Logger log = Logger.getLogger(AuthenticationService.class);
 
-    public boolean authenticate (String username, String password) {
+    public boolean authenticate(String username, String password) {
         UserDAO userDAO = new UserDAO();
         try {
             return userDAO.authenticateUser(username, password);
@@ -33,5 +38,23 @@ public class AuthenticationService {
             log.error("Error while authenticating the user.", e);
             return false;
         }
+    }
+
+    public boolean authenticate(String idToken) {
+        UserDAO userDAO = new UserDAO();
+        try {
+            return userDAO.userExist(getSubject(idToken));
+        } catch (SQLException e) {
+            log.error("Error while authenticating the user from ID token.", e);
+        } catch (ParseException e) {
+            log.error("Error while authenticating the user from ID token.", e);
+        }
+        return false;
+    }
+
+    private String getSubject(String idToken) throws ParseException {
+        SignedJWT signedJWT = SignedJWT.parse(idToken);
+        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+        return claimsSet.getSubject();
     }
 }

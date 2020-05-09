@@ -18,6 +18,7 @@
 
 package org.genesis;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -30,7 +31,7 @@ public class Utils {
         return DriverManager.getConnection(Constants.DB_CONNECTION_URL, Constants.DB_USERNAME, Constants.DB_PASSWORD);
     }
 
-    public static String base64Encode(String inputString) {
-        return Base64.getEncoder().encode(inputString.getBytes()).toString();
+    public static String base64Encode(String inputString) throws UnsupportedEncodingException {
+        return Base64.getEncoder().encodeToString(inputString.getBytes("UTF-8"));
     }
 }

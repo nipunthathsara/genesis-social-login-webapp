@@ -24,8 +24,7 @@ import org.genesis.dto.UserDTO;
 
 import java.sql.*;
 
-import static org.genesis.Constants.AUTHENTICATE_SQL;
-import static org.genesis.Constants.CREATE_USER_SQL;
+import static org.genesis.Constants.*;
 
 public class UserDAO {
 
@@ -63,6 +62,26 @@ public class UserDAO {
                 isAuthenticated = true;
             }
             log.info("User authenticated successfully.");
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return isAuthenticated;
+    }
+
+    public boolean userExist(String username) throws SQLException {
+        Connection connection = null;
+        boolean isAuthenticated = false;
+        try {
+            connection = Utils.getConnection();
+            PreparedStatement prepStatement = connection.prepareStatement(USER_EXISTS_SQL);
+            prepStatement.setString(1, username);
+            ResultSet rs = prepStatement.executeQuery();
+            while (rs.next()) {
+                isAuthenticated = true;
+            }
+            log.info("User exists");
         } finally {
             if (connection != null) {
                 connection.close();

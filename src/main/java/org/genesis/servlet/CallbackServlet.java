@@ -19,6 +19,7 @@
 package org.genesis.servlet;
 
 import org.genesis.Constants;
+import org.genesis.service.AuthenticationService;
 import org.genesis.service.TokenService;
 
 import javax.servlet.ServletException;
@@ -38,7 +39,9 @@ public class CallbackServlet extends HttpServlet {
         String code = req.getParameter(Constants.AUTHORIZATION_CODE_PARAMETER);
         if (code != null && !code.trim().isEmpty()) {
             TokenService tokenService = new TokenService();
-            tokenService.getIdToken(code.trim());
+            AuthenticationService authenticationService = new AuthenticationService();
+            String idToken = tokenService.getIdToken(code.trim());
+            authenticationService.authenticate(idToken);
         }
         super.doGet(req, resp);
     }

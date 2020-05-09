@@ -9,7 +9,7 @@
     <h1>
         Registration Page
     </h1>
-    <form action="http://localhost:8080/org.genesis.login/register" method="post">
+    <form action="http://localhost:8080/genesis-login/register" method="post">
       <div class="container">
         <label><b>Username</b></label>
         <input type="text" placeholder="Enter Username" name="username" required>

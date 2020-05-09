@@ -18,6 +18,8 @@
 
 package org.genesis.service;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -44,11 +46,12 @@ public class TokenService {
     CloseableHttpClient httpClient = HttpClients.createDefault();
     CloseableHttpResponse httpResponse;
 
-    public void getIdToken(String code) {
+    public String getIdToken(String code) {
+        String idToken = null;
         try {
             HttpPost request = new HttpPost(Constants.TOKEN_ENDPOINT_URL);
-            String authString = Constants.CLIENT_ID + ":" + Constants.CLIENT_SECRET;
-            request.addHeader(HttpHeaders.AUTHORIZATION, Utils.base64Encode(authString));
+            String authHeader = "Basic " + Utils.base64Encode(Constants.CLIENT_ID + ":" + Constants.CLIENT_SECRET);
+            request.addHeader(HttpHeaders.AUTHORIZATION, authHeader);
             request.addHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8");
             List<NameValuePair> parameters = new ArrayList<>();
             parameters.add(new BasicNameValuePair(Constants.CLIENT_ID_PARAMETER, Constants.CLIENT_ID));
@@ -57,7 +60,11 @@ public class TokenService {
             parameters.add(new BasicNameValuePair(Constants.AUTHORIZATION_CODE_PARAMETER, code));
             request.setEntity(new UrlEncodedFormEntity(parameters));
             httpResponse = httpClient.execute(request);
-            log.info("Response : " + EntityUtils.toString(httpResponse.getEntity()));
+            String response = EntityUtils.toString(httpResponse.getEntity());
+            log.info("Token call response : " + response);
+            JsonObject jsonObject = (new JsonParser()).parse(response).getAsJsonObject();
+            idToken = jsonObject.get("id_token").toString();
+            log.info("ID Token : " + idToken);
         } catch (UnsupportedEncodingException e) {
             log.error("Error while creating the token request.", e);
         } catch (ClientProtocolException e) {
@@ -65,5 +72,6 @@ public class TokenService {
         } catch (IOException e) {
             log.error("Error while sending the token request.", e);
         }
+        return idToken;
     }
 }
