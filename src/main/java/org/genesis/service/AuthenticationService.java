@@ -19,6 +19,7 @@
 package org.genesis.service;
 
 import org.apache.log4j.Logger;
+import org.genesis.Constants;
 import org.genesis.dao.UserDAO;
 
 import java.sql.SQLException;
@@ -42,8 +43,8 @@ public class AuthenticationService {
         UserDAO userDAO = new UserDAO();
         TokenService tokenService = new TokenService();
         try {
-            String username = tokenService.getSubject(code);
-            return userDAO.userExist(username);
+            String username = tokenService.getSubject(code, Constants.LOGIN_FLOW);
+            return userDAO.isUserExist(username);
         } catch (SQLException e) {
             log.error("Error while authenticating the user from ID token.", e);
         } catch (ParseException e) {

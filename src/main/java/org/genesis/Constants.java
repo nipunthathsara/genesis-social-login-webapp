@@ -33,7 +33,7 @@ public class Constants {
     public static final String USER_EXISTS_SQL = "SELECT * FROM user WHERE USERNAME = ?";
 
     public static final String TOKEN_ENDPOINT_URL = "https://localhost:9443/oauth2/token";
-    public static final String REDIRECT_URL = "http://localhost:8080/genesis-login/callback";
+    public static final String REDIRECT_URL = "http://localhost:8080/genesis-login/callback?flow=";
     public static final String CLIENT_ID = "j5eXqvEaZcpCO23fhsWtMDmzta4a";
     public static final String CLIENT_SECRET = "WMQqNdk5cRxv4SuhKsUKexhVWtca";
     public static final String CLIENT_ID_PARAMETER = "client_id";
@@ -41,4 +41,7 @@ public class Constants {
     public static final String REDIRECT_URI_PARAMETER = "redirect_uri";
     public static final String AUTHORIZATION_CODE_PARAMETER = "code";
     public static final String CODE_GRANT = "authorization_code";
+    public static final String FLOW_PARAMETER = "flow";
+    public static final String LOGIN_FLOW = "login";
+    public static final String REGISTER_FLOW = "register";
 }

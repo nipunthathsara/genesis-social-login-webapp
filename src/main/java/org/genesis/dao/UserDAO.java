@@ -70,7 +70,7 @@ public class UserDAO {
         return isAuthenticated;
     }
 
-    public boolean userExist(String username) throws SQLException {
+    public boolean isUserExist(String username) throws SQLException {
         Connection connection = null;
         boolean isAuthenticated = false;
         try {
@@ -79,9 +79,9 @@ public class UserDAO {
             prepStatement.setString(1, username);
             ResultSet rs = prepStatement.executeQuery();
             while (rs.next()) {
+                log.info("User exists");
                 isAuthenticated = true;
             }
-            log.info("User exists");
         } finally {
             if (connection != null) {
                 connection.close();

@@ -35,6 +35,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.genesis.Constants;
 import org.genesis.Utils;
+import org.genesis.dto.UserDTO;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -49,8 +50,9 @@ public class TokenService {
     CloseableHttpClient httpClient = HttpClients.createDefault();
     CloseableHttpResponse httpResponse;
 
-    private String exchangeCodeForToken(String code) {
+    private String exchangeCodeForToken(String code, String flow) {
         String idToken = null;
+        String redirectURL = (Constants.LOGIN_FLOW.equals(flow)) ? Constants.REDIRECT_URL + Constants.LOGIN_FLOW : Constants.REDIRECT_URL + Constants.REGISTER_FLOW;
         try {
             HttpPost request = new HttpPost(Constants.TOKEN_ENDPOINT_URL);
             String authHeader = "Basic " + Utils.base64Encode(Constants.CLIENT_ID + ":" + Constants.CLIENT_SECRET);
@@ -59,7 +61,7 @@ public class TokenService {
             List<NameValuePair> parameters = new ArrayList<>();
             parameters.add(new BasicNameValuePair(Constants.CLIENT_ID_PARAMETER, Constants.CLIENT_ID));
             parameters.add(new BasicNameValuePair(Constants.GRANT_TYPE_PARAMETER, Constants.CODE_GRANT));
-            parameters.add(new BasicNameValuePair(Constants.REDIRECT_URI_PARAMETER, Constants.REDIRECT_URL));
+            parameters.add(new BasicNameValuePair(Constants.REDIRECT_URI_PARAMETER, redirectURL));
             parameters.add(new BasicNameValuePair(Constants.AUTHORIZATION_CODE_PARAMETER, code));
             request.setEntity(new UrlEncodedFormEntity(parameters));
             httpResponse = httpClient.execute(request);
@@ -79,11 +81,22 @@ public class TokenService {
         return idToken;
     }
 
-    public String getSubject(String code) throws ParseException {
-        String idToken = exchangeCodeForToken(code);
+    public String getSubject(String code, String flow) throws ParseException {
+        String idToken = exchangeCodeForToken(code, flow);
         SignedJWT signedJWT = SignedJWT.parse(idToken);
         JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
         log.info("Username : "  + claimsSet.getSubject());
         return claimsSet.getSubject();
+    }
+
+    public UserDTO getUserClaims(String code, String flow) throws ParseException {
+        String idToken = exchangeCodeForToken(code, flow);
+        SignedJWT signedJWT = SignedJWT.parse(idToken);
+        JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+        UserDTO user = new UserDTO();
+        user.setUsername(claimsSet.getSubject());
+        user.setGender(claimsSet.getClaim("gender").toString());
+        user.setEmail(claimsSet.getClaim("email").toString());
+        return user;
     }
 }

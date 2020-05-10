@@ -20,6 +20,7 @@ package org.genesis.servlet;
 
 import org.genesis.Constants;
 import org.genesis.service.AuthenticationService;
+import org.genesis.service.RegistrationService;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(
         name = "callbackServlet",
-        urlPatterns = "/callback"
+        urlPatterns = "/callback/*"
 )
 public class CallbackServlet extends HttpServlet {
     @Override
@@ -36,7 +37,12 @@ public class CallbackServlet extends HttpServlet {
         String code = req.getParameter(Constants.AUTHORIZATION_CODE_PARAMETER);
         if (code != null && !code.trim().isEmpty()) {
             AuthenticationService authenticationService = new AuthenticationService();
-            authenticationService.authenticateWithOpenid(code);
+            RegistrationService registrationService = new RegistrationService();
+            if ("login".equals(req.getParameter(Constants.FLOW_PARAMETER))) {
+                authenticationService.authenticateWithOpenid(code);
+            } else if ("register".equals(req.getParameter(Constants.FLOW_PARAMETER))) {
+                registrationService.registerWithOpenid(code);
+            }
         }
     }
 }

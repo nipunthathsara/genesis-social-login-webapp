@@ -19,8 +19,13 @@
 package org.genesis.service;
 
 import org.apache.log4j.Logger;
+import org.genesis.Constants;
+import org.genesis.Utils;
 import org.genesis.dao.UserDAO;
 import org.genesis.dto.UserDTO;
+
+import java.sql.SQLException;
+import java.text.ParseException;
 
 public class RegistrationService {
 
@@ -34,6 +39,21 @@ public class RegistrationService {
         } catch (Exception e) {
             log.error("Error while creating the user.", e);
             error = true;
+        }
+        return error;
+    }
+
+    public boolean registerWithOpenid(String code) {
+        boolean error = false;
+        TokenService tokenService = new TokenService();
+        UserDAO userDAO = new UserDAO();
+        try {
+            UserDTO userDTO = tokenService.getUserClaims(code, Constants.REGISTER_FLOW);
+            userDTO.setPassword(Utils.getRandomPassword());
+            userDAO.createUser(userDTO);
+        } catch (ParseException | SQLException e) {
+            error = true;
+            log.error("Error while registering user with Openid.", e);
         }
         return error;
     }

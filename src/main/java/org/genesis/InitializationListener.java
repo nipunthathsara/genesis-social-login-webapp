@@ -30,10 +30,15 @@ public class InitializationListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        final URL resource = this.getClass().getClassLoader().getResource("client-truststore.jks");
-        System.setProperty("javax.net.ssl.trustStore", resource.getPath());
-        System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
-        System.setProperty("javax.net.ssl.trustStoreType", "JKS");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            final URL resource = this.getClass().getClassLoader().getResource("client-truststore.jks");
+            System.setProperty("javax.net.ssl.trustStore", resource.getPath());
+            System.setProperty("javax.net.ssl.trustStorePassword", "wso2carbon");
+            System.setProperty("javax.net.ssl.trustStoreType", "JKS");
+        } catch (ClassNotFoundException e) {
+            log.error("Error while initializing the webapp.", e);
+        }
         log.info("Webapp started.");
     }
 

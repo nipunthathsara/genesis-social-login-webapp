@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <%@ page import="org.genesis.Constants" %>
     <meta charset="UTF-8">
     <title>Genesis Login</title>
 </head>
@@ -33,13 +34,11 @@
     </form>
     <div class="container">
         <button type="button" onclick="doOpenId()">WSO2 OpenId Login</button>
-        <span>Forgot <a href="#">password?</a></span>
-     </div>
-
+    </div>
 
      <script>
         function doOpenId(){
-            var authorizeURL ="https://localhost:9443/oauth2/authorize?response_type=code&scope=openid&client_id=j5eXqvEaZcpCO23fhsWtMDmzta4a&nonce=login_flow&redirect_uri=http://localhost:8080/genesis-login/callback";
+            var authorizeURL ="https://localhost:9443/oauth2/authorize?response_type=code&scope=openid&client_id=<%=Constants.CLIENT_ID%>&redirect_uri=<%=Constants.REDIRECT_URL%><%=Constants.LOGIN_FLOW%>";
             window.location = authorizeURL;
         }
      </script>

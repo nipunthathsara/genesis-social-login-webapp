@@ -19,6 +19,7 @@
 package org.genesis;
 
 import java.io.UnsupportedEncodingException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -26,13 +27,17 @@ import java.util.Base64;
 
 public class Utils {
 
-    public static Connection getConnection() throws SQLException {
+    private static SecureRandom random = new SecureRandom();
 
+    public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(Constants.DB_CONNECTION_URL, Constants.DB_USERNAME, Constants.DB_PASSWORD);
     }
 
     public static String base64Encode(String inputString) throws UnsupportedEncodingException {
-
         return Base64.getEncoder().encodeToString(inputString.getBytes("UTF-8"));
+    }
+
+    public static String getRandomPassword() {
+        return  random.generateSeed(20).toString();
     }
 }
