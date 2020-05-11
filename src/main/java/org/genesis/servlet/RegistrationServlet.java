@@ -45,8 +45,8 @@ public class RegistrationServlet extends HttpServlet {
         RegistrationService regService = new RegistrationService();
         boolean error = regService.registerUser(userDTO);
         if (error) {
-            resp.setStatus(500);
-            resp.sendError(1000, "Error occurred while creating the user");
+            resp.setStatus(302);
+            resp.sendRedirect("error.jsp");
         } else {
             resp.setStatus(302);
             resp.sendRedirect("login.jsp");

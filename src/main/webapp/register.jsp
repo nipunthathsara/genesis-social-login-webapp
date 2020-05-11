@@ -44,15 +44,15 @@
         <span><a href="login.do">Already have an account?</a></span>
       </div>
     </form>
-        <div class="container">
-            <button type="button" onclick="doOpenId()">Register with WSO2</button>
-        </div>
+     <div class="container">
+         <button type="button" onclick="doOpenId()">Register with your Social Account</button>
+     </div>
 
-         <script>
-            function doOpenId(){
-                var authorizeURL ="https://localhost:9443/oauth2/authorize?response_type=code&scope=openid&client_id=<%=Constants.CLIENT_ID%>&redirect_uri=<%=Constants.REDIRECT_URL%><%=Constants.REGISTER_FLOW%>";
-                window.location = authorizeURL;
-            }
-         </script>
+     <script>
+         function doOpenId(){
+             var authorizeURL ="<%=Constants.AUTHORIZATION_URL%><%=Constants.REGISTER_FLOW%>";
+             window.location = authorizeURL;
+         }
+     </script>
 </body>
 </html>

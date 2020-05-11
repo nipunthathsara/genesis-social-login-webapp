@@ -50,10 +50,11 @@ public class TokenService {
     CloseableHttpClient httpClient = HttpClients.createDefault();
     CloseableHttpResponse httpResponse;
 
-    private String exchangeCodeForToken(String code, String flow) {
+    private String exchangeCodeForToken(String code, String flow) throws IOException {
         String idToken = null;
         String redirectURL = (Constants.LOGIN_FLOW.equals(flow)) ? Constants.REDIRECT_URL + Constants.LOGIN_FLOW : Constants.REDIRECT_URL + Constants.REGISTER_FLOW;
         try {
+            // Do token call.
             HttpPost request = new HttpPost(Constants.TOKEN_ENDPOINT_URL);
             String authHeader = "Basic " + Utils.base64Encode(Constants.CLIENT_ID + ":" + Constants.CLIENT_SECRET);
             request.addHeader(HttpHeaders.AUTHORIZATION, authHeader);
@@ -65,23 +66,27 @@ public class TokenService {
             parameters.add(new BasicNameValuePair(Constants.AUTHORIZATION_CODE_PARAMETER, code));
             request.setEntity(new UrlEncodedFormEntity(parameters));
             httpResponse = httpClient.execute(request);
-
             String response = EntityUtils.toString(httpResponse.getEntity());
             log.info("Token call response : " + response);
+
+            // Extract ID Token from the token response.
             JsonObject jsonObject = (new JsonParser()).parse(response).getAsJsonObject();
             idToken = jsonObject.get("id_token").toString();
             log.info("ID Token : " + idToken);
         } catch (UnsupportedEncodingException e) {
             log.error("Error while creating the token request.", e);
+            throw e;
         } catch (ClientProtocolException e) {
             log.error("Error while sending the token request.", e);
+            throw e;
         } catch (IOException e) {
             log.error("Error while sending the token request.", e);
+            throw e;
         }
         return idToken;
     }
 
-    public String getSubject(String code, String flow) throws ParseException {
+    public String getSubject(String code, String flow) throws ParseException, IOException {
         String idToken = exchangeCodeForToken(code, flow);
         SignedJWT signedJWT = SignedJWT.parse(idToken);
         JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
@@ -89,7 +94,7 @@ public class TokenService {
         return claimsSet.getSubject();
     }
 
-    public UserDTO getUserClaims(String code, String flow) throws ParseException {
+    public UserDTO getUserClaims(String code, String flow) throws ParseException, IOException {
         String idToken = exchangeCodeForToken(code, flow);
         SignedJWT signedJWT = SignedJWT.parse(idToken);
         JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();

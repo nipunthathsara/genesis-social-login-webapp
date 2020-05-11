@@ -24,6 +24,7 @@ import org.genesis.Utils;
 import org.genesis.dao.UserDAO;
 import org.genesis.dto.UserDTO;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
@@ -51,7 +52,7 @@ public class RegistrationService {
             UserDTO userDTO = tokenService.getUserClaims(code, Constants.REGISTER_FLOW);
             userDTO.setPassword(Utils.getRandomPassword());
             userDAO.createUser(userDTO);
-        } catch (ParseException | SQLException e) {
+        } catch (ParseException | SQLException | IOException e) {
             error = true;
             log.error("Error while registering user with Openid.", e);
         }

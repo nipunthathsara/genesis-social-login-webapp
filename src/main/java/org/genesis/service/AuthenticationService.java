@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.genesis.Constants;
 import org.genesis.dao.UserDAO;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
@@ -35,8 +36,8 @@ public class AuthenticationService {
             return userDAO.authenticateUser(username, password);
         } catch (Exception e) {
             log.error("Error while authenticating the user.", e);
-            return false;
         }
+        return false;
     }
 
     public boolean authenticateWithOpenid(String code) {
@@ -45,9 +46,7 @@ public class AuthenticationService {
         try {
             String username = tokenService.getSubject(code, Constants.LOGIN_FLOW);
             return userDAO.isUserExist(username);
-        } catch (SQLException e) {
-            log.error("Error while authenticating the user from ID token.", e);
-        } catch (ParseException e) {
+        } catch (SQLException | ParseException | IOException e) {
             log.error("Error while authenticating the user from ID token.", e);
         }
         return false;

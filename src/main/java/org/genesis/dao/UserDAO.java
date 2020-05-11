@@ -31,7 +31,6 @@ public class UserDAO {
     private final static Logger log = Logger.getLogger(UserDAO.class);
 
     public void createUser(UserDTO userDTO) throws SQLException {
-
         Connection connection = null;
         try {
             connection = Utils.getConnection();

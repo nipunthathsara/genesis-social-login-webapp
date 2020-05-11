@@ -42,7 +42,9 @@ public class authenticationServlet extends HttpServlet {
         if (isAuthenticated) {
             resp.setStatus(302);
             resp.sendRedirect("index.jsp");
+        } else {
+            resp.setStatus(302);
+            resp.sendRedirect("login.do");
         }
-        resp.setStatus(401);
     }
 }

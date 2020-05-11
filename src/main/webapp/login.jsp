@@ -30,15 +30,16 @@
       <div class="container">
         <button type="button" class="cancelbtn">Cancel</button>
         <span>Forgot <a href="#">password?</a></span>
+        <span><a href="register.do">Dont have an account?</a></span>
       </div>
     </form>
     <div class="container">
-        <button type="button" onclick="doOpenId()">WSO2 OpenId Login</button>
+        <button type="button" onclick="doOpenId()">Login with your Social Account</button>
     </div>
 
      <script>
         function doOpenId(){
-            var authorizeURL ="https://localhost:9443/oauth2/authorize?response_type=code&scope=openid&client_id=<%=Constants.CLIENT_ID%>&redirect_uri=<%=Constants.REDIRECT_URL%><%=Constants.LOGIN_FLOW%>";
+            var authorizeURL ="<%=Constants.AUTHORIZATION_URL%><%=Constants.LOGIN_FLOW%>";
             window.location = authorizeURL;
         }
      </script>

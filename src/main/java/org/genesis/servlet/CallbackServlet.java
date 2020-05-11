@@ -26,6 +26,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @WebServlet(
         name = "callbackServlet",
@@ -33,15 +34,31 @@ import javax.servlet.http.HttpServletResponse;
 )
 public class CallbackServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String code = req.getParameter(Constants.AUTHORIZATION_CODE_PARAMETER);
         if (code != null && !code.trim().isEmpty()) {
             AuthenticationService authenticationService = new AuthenticationService();
             RegistrationService registrationService = new RegistrationService();
+
+            // Login service callback
             if ("login".equals(req.getParameter(Constants.FLOW_PARAMETER))) {
-                authenticationService.authenticateWithOpenid(code);
+                boolean isAuthenticated = authenticationService.authenticateWithOpenid(code);
+                resp.setStatus(302);
+                if (isAuthenticated) {
+                    resp.sendRedirect("index.jsp");
+                } else {
+                    resp.sendRedirect("login.do");
+                }
+             // Registration service callback
             } else if ("register".equals(req.getParameter(Constants.FLOW_PARAMETER))) {
-                registrationService.registerWithOpenid(code);
+                boolean isError = registrationService.registerWithOpenid(code);
+                resp.setStatus(302);
+                if (!isError) {
+                    // If registration is a success, do an auto login.
+                    resp.sendRedirect(Constants.AUTHORIZATION_URL + Constants.LOGIN_FLOW);
+                } else {
+                    resp.sendRedirect("register.do");
+                }
             }
         }
     }

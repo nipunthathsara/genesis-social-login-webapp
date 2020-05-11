@@ -44,4 +44,6 @@ public class Constants {
     public static final String FLOW_PARAMETER = "flow";
     public static final String LOGIN_FLOW = "login";
     public static final String REGISTER_FLOW = "register";
+    public static final String AUTHORIZATION_URL = "https://localhost:9443/oauth2/authorize?response_type=code&scope=openid&client_id="
+            + CLIENT_ID + "&redirect_uri=" + REDIRECT_URL;
 }
